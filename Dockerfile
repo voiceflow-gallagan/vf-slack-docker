@@ -15,5 +15,5 @@ COPY . .
 ENV NODE_ENV production
 
 # run the app
-CMD [ "node", "start" ]
+CMD [ "npm", "start" ]
 
