@@ -8,7 +8,11 @@
   "scripts": {
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "npx eslint ."
+    "lint": "npx eslint .",
+    "docker-build": "docker-compose down --rmi all && docker-compose up --remove-orphans --build -d",
+    "docker-debug": "docker-compose down && docker-compose up --remove-orphans",
+    "docker-start": "docker-compose down && docker-compose up --remove-orphans -d",
+    "docker-stop": "docker-compose down"
   },
   "repository": {
     "type": "git",
