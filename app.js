@@ -28,8 +28,6 @@ const SLACK_APP_TOKEN = process.env.SLACK_APP_TOKEN
 const SLACK_BOT_TOKEN = process.env.SLACK_BOT_TOKEN
 const SLACK_SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET
 
-console.log(SLACK_SIGNING_SECRET)
-
 let noreply
 let isError = false
 let errorMessage = ''
@@ -144,6 +142,20 @@ async function interact(userID, say, client, request) {
   let userName = i.user.profile.real_name_normalized
   let userPix = i.user.profile.image_48
 
+  function matchesSpecificPattern(data) {
+    // Check if the data is an array with exactly two elements
+    if (Array.isArray(data) && data.length === 2) {
+      // Check if the first element is a "path" object with a payload.path of "jump"
+      const isFirstElementCorrect = data[0].type === 'path' && data[0].payload && data[0].payload.path === 'jump';
+      // Check if the second element is an "end" object
+      const isSecondElementCorrect = data[1].type === 'end';
+      // Return true if both elements match the expected pattern
+      return isFirstElementCorrect && isSecondElementCorrect;
+    }
+    // Return false if the data does not match the pattern
+    return false;
+  }
+
   // call the Voiceflow API with the user's name & request, get back a response
   try {
     const response = await axios({
@@ -164,6 +176,13 @@ async function interact(userID, say, client, request) {
       endpoint: VOICEFLOW_RUNTIME_ENDPOINT,
     })
     if (response.data) {
+      // Check if the response matches the specific pattern
+      if (matchesSpecificPattern(response.data)) {
+        await interact(userID, say, client, {
+          type: 'launch',
+        })
+        return;
+      }
       for (const trace of response.data) {
         switch (trace.type) {
           case 'text': {
@@ -213,7 +232,7 @@ async function interact(userID, say, client, request) {
 
               try {
                 await say({
-                  text: 'Voiceflow Bot',
+                  text: 'AskPeople',
                   blocks: [
                     {
                       type: 'section',
@@ -237,7 +256,7 @@ async function interact(userID, say, client, request) {
               await say(JSON.parse(trace.payload.message))
             } else {
               await say({
-                text: 'Voiceflow Bot',
+                text: 'AskPeople',
                 blocks: [
                   {
                     type: 'section',
@@ -255,7 +274,7 @@ async function interact(userID, say, client, request) {
             if (trace.payload.visualType === 'image') {
               try {
                 await say({
-                  text: 'Voiceflow Bot',
+                  text: 'AskPeople',
                   blocks: [
                     {
                       type: 'image',
@@ -334,7 +353,7 @@ async function interact(userID, say, client, request) {
                   }
                 })
               await say({
-                text: 'Voiceflow Bot',
+                text: 'AskPeople',
                 blocks: [
                   {
                     type: 'actions',
@@ -370,7 +389,7 @@ async function interact(userID, say, client, request) {
     } else {
       try {
         await say({
-          text: 'Voiceflow Bot',
+          text: 'AskPeople',
           blocks: [
             {
               type: 'section',
@@ -378,7 +397,7 @@ async function interact(userID, say, client, request) {
                 type: 'mrkdwn',
                 text: cleanText(
                   stripBackSlashs(
-                    'Error with DM API. Please try again a bit later'
+                    'Error with the AskPeople agent. Please try again a bit later'
                   )
                 ),
               },
@@ -394,7 +413,7 @@ async function interact(userID, say, client, request) {
   } catch (error) {
     try {
       await say({
-        text: 'Voiceflow Bot',
+        text: 'AskPeople',
         blocks: [
           {
             type: 'section',
