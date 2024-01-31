@@ -1,0 +1,21 @@
+version: '3'
+services:
+  vf-slack:
+    build: .
+    restart: unless-stopped
+    image: 'vf-slack'
+    container_name: 'vf-slack'
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - VOICEFLOW_API_KEY = ${VOICEFLOW_API_KEY}
+      - VOICEFLOW_VERSION_ID = ${VOICEFLOW_VERSION_ID}
+      - VOICEFLOW_PROJECT_ID = ${VOICEFLOW_PROJECT_ID}
+      - VOICEFLOW_RUNTIME_ENDPOINT = ${VOICEFLOW_RUNTIME_ENDPOINT}
+      - SLACK_APP_TOKEN = ${SLACK_APP_TOKEN}
+      - SLACK_BOT_TOKEN = ${SLACK_BOT_TOKEN}
+      - SLACK_SIGNING_SECRET = ${SLACK_SIGNING_SECRET}
+      - NODE_ENV = ${NODE_ENV}
+      - PORT = ${PORT}

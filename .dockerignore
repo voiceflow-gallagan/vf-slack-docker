@@ -1,0 +1,6 @@
+.env
+.env_vf
+.git
+.github
+backup
+node_modules
